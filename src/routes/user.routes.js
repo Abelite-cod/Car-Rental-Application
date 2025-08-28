@@ -1,27 +1,46 @@
 const express = require('express');
-const {
-  signup,
+const { signup,
   login,
   makeAdmin,
+  forgotPassword,
+  verifyOtp,
   resetPassword,
-  verifyOtp
-} = require('../controller/user.controller');
-
+  verifyEmail,
+  initiateGoogleAuth,
+  handleGoogleCallback,
+  unlinkGoogle,
+  setPasswordForGoogleUser,
+  uploadProfilePicture,
+  getUserProfile,
+  deleteProfilePicture,
+  updateProfile} = require('../controller/user.controller');
+const { isAuth, isAdmin } = require('../middlewares/auth');
+const { upload } = require('../config/cloudinary');
 const router = express.Router();
 
-// Authentication
+// Regular authentication routes
 router.post('/signup', signup);
 router.post('/login', login);
-
-// Admin privilege
-router.patch('/makeAdmin/:userId', makeAdmin);
-
-
-// Password reset
-router.post('/reset-password', resetPassword);
-
-// OTP verification
+router.patch('/make-admin/:userId', isAuth, isAdmin, makeAdmin);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:userId', resetPassword);
 router.post('/verify-otp', verifyOtp);
+router.get('/verify-email', verifyEmail);
 
-module.exports = router;
+// Server-side Google OAuth routes
+router.get('/google', initiateGoogleAuth);
+router.get('/auth/google/callback', handleGoogleCallback);
+router.delete('/unlink-google/:userId', isAuth, unlinkGoogle);
+router.post('/set-password/:userId', isAuth, setPasswordForGoogleUser);
 
+'http://localhost:3000/api/auth/google/callback'
+
+// Profile management routes (protected)
+router.get('/profile', isAuth, getUserProfile);
+router.put('/profile', isAuth, updateProfile);
+router.post('/profile/picture', isAuth, upload.single('profilePicture'), uploadProfilePicture);
+router.delete('/profile/picture', isAuth, deleteProfilePicture);
+
+
+
+module.exports = router

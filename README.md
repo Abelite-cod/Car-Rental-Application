@@ -268,3 +268,8 @@ Response from backend
     "status": "paid"
   }
 }
+
+👨‍💻 Author
+
+Abelite-cod (Abel Okagbare)
+GitHub: [Abelite-cod](https://github.com/Abelite-cod/Car-Rental-Application)
